@@ -17,6 +17,11 @@ poetry install
 ### usage
 ```
 poetry shell
-python3 voice.py
+python3 main.py
 ```
-Transcriptions will land in `transcriptions` folder under the current date.
+
+Transcriptions will land in `output.txt` in real-time unless invoked with `output` flag
+
+```
+python3 main.py --output="path/to/my/file"
+```
