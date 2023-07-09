@@ -41,8 +41,8 @@ make [size you want, e.g large]
 
 Second, update the variable `WHISPER_MODEL` in `constants.py`
 ```
-- WHISPER_MODEL = Path("./whisper.cpp/models/ggml-base.en.bin")
-+ WHISPER_MODEL = Path("./whisper.cpp/models/ggml-large.bin")
+- WHISPER_MODEL = "base.en"
++ WHISPER_MODEL = "large"
 
 ```
 

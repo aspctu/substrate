@@ -10,8 +10,8 @@ console = Console()
 
 class Whisper:
     """Handles the transcription of audio files using Whisper.cpp"""
-    def __init__(self, model_path: Path = WHISPER_MODEL):
-        self.model_path = model_path
+    def __init__(self, model_name: str = WHISPER_MODEL):
+        self.model_path = f"./whisper.cpp/models/ggml-{model_name}.bin"
 
     def transcribe(self, audio_file: Path) -> str:
         """Transcribes an audio file

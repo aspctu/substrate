@@ -62,7 +62,7 @@ class Recorder:
             return f"{hashlib.sha1(timestamp.encode()).hexdigest()}.{AUDIO_FORMAT}"
 
         raw_data = audio.get_raw_data(
-            converlt_rate=SAMPLING_RATE,
+            convert_rate=SAMPLING_RATE,
             convert_width=2,
         )
         audio_segment = AudioSegment(
