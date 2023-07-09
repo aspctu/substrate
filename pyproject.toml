@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "substrate"
+version = "0.1.0"
+description = ""
+authors = ["Abu Qader  <48742992+aspctu@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+PyAudio = "^0.2.13"
+SpeechRecognition = "^3.10.0"
+pydub = "^0.25.1"
+sounddevice = "^0.4.6"
+numpy = "^1.25.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
