@@ -43,11 +43,10 @@ class Transcriber:
         self.output_file = Path(output_file)
 
     def transcribe(self):
-
         while not self.stop_event.is_set():
             if not self.transcription_queue.empty():
                 audio_file = self.transcription_queue.get()
-                
+
                 try:
                     transcript = self.whisper.transcribe(audio_file)
                     print(transcript)

@@ -14,8 +14,6 @@ class Recorder:
         self.stop_event = stop_event
 
     def record(self):
-
-        # Instantiate recognizer
         recognizer = Recognizer()
         recognizer.energy_threshold = 1000
         recognizer.dynamic_energy_threshold = False
