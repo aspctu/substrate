@@ -26,3 +26,6 @@ Transcriptions will land in `output.txt` in real-time unless invoked with `outpu
 ```
 python3 main.py --output="path/to/my/file"
 ```
+
+### credits
+❤️ to [whisper.cpp](https://github.com/ggerganov/whisper.cpp) and [speech_recognition](https://github.com/Uberi/speech_recognition)
