@@ -1,14 +1,13 @@
 import datetime
 import hashlib
-import os
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 import subprocess
-from pathlib import Path
 from pydub import AudioSegment
 from speech_recognition import Recognizer, Microphone, AudioData
+from pathlib import Path
 
 # Constants
 SAMPLING_RATE = 16000
@@ -32,7 +31,7 @@ class Whisper:
 
     def transcribe(self, audio_file):
         audio_file_path = Path(audio_file)
-        txt_file_path = audio_file_path.with_suffix(".txt")
+        txt_file_path = Path(f"{audio_file_path}.txt")
         try:
             # Run whisper command and capture output
             subprocess.run(
