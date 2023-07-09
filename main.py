@@ -1,11 +1,11 @@
 import argparse
+import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
+
 from recorder import Recorder
 from transcriber import Transcriber
-from queue import Queue
-import time
-
-import threading
 
 if __name__ == "__main__":
     arguments = argparse.ArgumentParser()

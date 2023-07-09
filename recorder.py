@@ -1,9 +1,12 @@
-from speech_recognition import Recognizer, Microphone, AudioData
-from pydub import AudioSegment
-from constants import *
 import datetime
 import hashlib
 import time
+
+from pydub import AudioSegment
+from speech_recognition import AudioData, Microphone, Recognizer
+
+from constants import AUDIO_FORMAT, SAMPLING_RATE, CHANNELS, PHRASE_TIME_LIMIT
+
 
 class Recorder:
     def __init__(self, transcription_queue, stop_event):

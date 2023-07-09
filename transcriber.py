@@ -1,8 +1,8 @@
-from constants import *
-from pathlib import Path
 import subprocess
-import datetime
 import threading
+from pathlib import Path
+
+from constants import WHISPER_MODEL
 
 class Whisper:
     def __init__(self, model_path):
@@ -13,7 +13,10 @@ class Whisper:
         txt_file_path = Path(f"{audio_file_path}.txt")
         try:
             subprocess.run(
-                ['./whisper.cpp/main', '-m', str(self.model_path), '-f', str(audio_file_path), '--output-txt'],
+                [
+                    './whisper.cpp/main', '-m', str(self.model_path), '-f', 
+                    str(audio_file_path), '--output-txt'
+                ],
                 check=True,
                 text=True,
                 capture_output=True
@@ -44,17 +47,16 @@ class Transcriber:
         while not self.stop_event.is_set():
             if not self.transcription_queue.empty():
                 audio_file = self.transcription_queue.get()
-
+                
                 try:
                     transcript = self.whisper.transcribe(audio_file)
+                    print(transcript)
                 except Exception as e:
                     print(f"Failed to transcribe {audio_file}: {e}")
                     continue
 
-                print(transcript)
-
-                with self.file_lock:  # Ensure only one thread writes to the file at a time
-                    with self.output_file.open('a') as output_file:  # Open in append mode
+                with self.file_lock: 
+                    with self.output_file.open('a') as output_file:
                         output_file.write(transcript + '\n')
 
                 Path(audio_file).unlink(missing_ok=True)
