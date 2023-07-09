@@ -11,6 +11,7 @@ SpeechRecognition = "^3.10.0"
 pydub = "^0.25.1"
 sounddevice = "^0.4.6"
 numpy = "^1.25.1"
+rich = "^13.4.2"
 
 [tool.poetry.dev-dependencies]
 
