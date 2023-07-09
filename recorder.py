@@ -7,18 +7,22 @@ from pydub import AudioSegment
 from rich.console import Console
 from speech_recognition import AudioData, Microphone, Recognizer
 
-from constants import AUDIO_FORMAT, CHANNELS, PHRASE_TIME_LIMIT, SAMPLING_RATE
+from constants import AUDIO_FORMAT, CHANNELS, PHRASE_TIME_LIMIT, SAMPLING_RATE, PAUSE_THRESHOLD, ENERGY_THRESHOLD
+import queue
+import threading
 
 console = Console()
 
 
 class Recorder:
-    def __init__(self, transcription_queue, stop_event):
+    def __init__(self, transcription_queue: queue.Queue, stop_event: threading.Event):
         self.transcription_queue = transcription_queue
         self.stop_event = stop_event
         self.recognizer = Recognizer()
-        self.recognizer.energy_threshold = 1000
+        self.recognizer.energy_threshold = ENERGY_THRESHOLD
         self.recognizer.dynamic_energy_threshold = False
+        self.recognizer.pause_threshold = PAUSE_THRESHOLD
+
     
     def serialize_buffer(self, audio: AudioData) -> Path:
         def _generate_filename() -> str:
@@ -55,7 +59,7 @@ class Recorder:
             phrase_time_limit=PHRASE_TIME_LIMIT
         )
 
-        console.print("[green]Starting recording... [/green]")
+        console.print("[bold green]Starting recording...")
 
         # Keep this thread alive until stop event is set
         while not self.stop_event.is_set():

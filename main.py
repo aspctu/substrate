@@ -2,6 +2,7 @@ import argparse
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from queue import Queue
 
 from recorder import Recorder
@@ -16,7 +17,11 @@ if __name__ == "__main__":
     stop_event = threading.Event()
 
     recorder = Recorder(transcription_queue, stop_event)
-    transcriber = Transcriber(transcription_queue, stop_event, args.output)
+    transcriber = Transcriber(
+        transcription_queue,
+        stop_event,
+        Path(args.output)
+    )
 
     with ThreadPoolExecutor(max_workers=2) as executor:
         executor.submit(recorder.record)

@@ -4,21 +4,21 @@ from pathlib import Path
 
 from constants import WHISPER_MODEL
 from rich.console import Console
+import queue
 
 console = Console()
 
 class Whisper:
-    def __init__(self, model_path):
-        self.model_path = Path(model_path)
+    def __init__(self, model_path: Path = WHISPER_MODEL):
+        self.model_path = model_path
 
-    def transcribe(self, audio_file: str) -> str:
-        audio_file_path = Path(audio_file)
-        txt_file_path = Path(f"{audio_file_path}.txt")
+    def transcribe(self, audio_file: Path) -> str:
+        txt_file_path = Path(f"{audio_file}.txt")
         try:
             subprocess.run(
                 [
                     './whisper.cpp/main', '-m', str(self.model_path), '-f',
-                    str(audio_file_path), '--output-txt'
+                    str(audio_file), '--output-txt'
                 ],
                 check=True,
                 text=True,
@@ -37,31 +37,37 @@ class Whisper:
         return transcription.strip()
 
 class Transcriber:
-    def __init__(self, transcription_queue, stop_event, output_file):
-        self.whisper = Whisper(model_path=WHISPER_MODEL)
+    def __init__(
+        self,
+        transcription_queue: queue.Queue,
+        stop_event: threading.Event,
+        output_file: Path
+    ):
+        self.whisper = Whisper()
+        self.file_lock = threading.Lock()
         self.transcription_queue = transcription_queue
         self.stop_event = stop_event
-        self.file_lock = threading.Lock()
-        self.output_file = Path(output_file)
+        self.output_file = output_file
 
     def write(self, transcription: str) -> None:
         with self.file_lock:
             with self.output_file.open('a') as output_file:
                 output_file.write(transcription + '\n')
 
-    def transcribe(self):
+    def transcribe(self) -> None:
         while not self.stop_event.is_set():
             if not self.transcription_queue.empty():
-                audio_file = self.transcription_queue.get()
+                audio_file = Path(self.transcription_queue.get())
 
                 try:
                     transcript = self.whisper.transcribe(audio_file)
-                    console.print(f"[blue]{transcript} [/blue]")
+                    console.print(f"[green] {transcript.strip()} [/green]")
                 except Exception as e:
                     console.print(f"[red]Failed to transcribe {audio_file}: {e}[/red]")
+                    audio_file.unlink(missing_ok=True)
                     continue
 
                 self.write(transcription=transcript)
 
-                Path(audio_file).unlink(missing_ok=True)
+                audio_file.unlink(missing_ok=True)
                 self.transcription_queue.task_done()
