@@ -1,9 +1,9 @@
 import argparse
-import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from queue import Queue
+from threading import Event
 
 from recorder import Recorder
 from transcriber import Transcriber
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     args = arguments.parse_args()
 
     transcription_queue = Queue()
-    stop_event = threading.Event()
+    stop_event = Event()
 
     recorder = Recorder(transcription_queue, stop_event)
     transcriber = Transcriber(

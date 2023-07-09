@@ -1,18 +1,27 @@
 import subprocess
+import queue
 import threading
 from pathlib import Path
+from rich.console import Console
 
 from constants import WHISPER_MODEL
-from rich.console import Console
-import queue
 
 console = Console()
 
 class Whisper:
+    """Handles the transcription of audio files using Whisper.cpp"""
     def __init__(self, model_path: Path = WHISPER_MODEL):
         self.model_path = model_path
 
     def transcribe(self, audio_file: Path) -> str:
+        """Transcribes an audio file
+        
+        Args:
+            audio_file (Path): The path to the audio file to transcribe.
+        
+        Returns:
+            str: The transcription of the audio file.
+        """
         txt_file_path = Path(f"{audio_file}.txt")
         try:
             subprocess.run(
@@ -30,13 +39,18 @@ class Whisper:
 
         # Read in the generate file txt
         transcription = txt_file_path.read_text()
-        
+
         # Remove the generated file
         txt_file_path.unlink(missing_ok=True)
 
         return transcription.strip()
 
 class Transcriber:
+    """Transcribes queued audio files in a separate thread.
+
+    This class continuously processes audio files for transcription
+    via usage of the transcription queue.
+    """
     def __init__(
         self,
         transcription_queue: queue.Queue,
@@ -50,11 +64,19 @@ class Transcriber:
         self.output_file = output_file
 
     def write(self, transcription: str) -> None:
+        """Writes the transcription to the output file.
+
+        Args:
+            transcription (str): The transcription to write.
+        """
         with self.file_lock:
             with self.output_file.open('a') as output_file:
                 output_file.write(transcription + '\n')
 
     def transcribe(self) -> None:
+        """Transcribes audio files from the transcription queue, writes
+        the transcription to the output file, and deletes the audio file.
+        """
         while not self.stop_event.is_set():
             if not self.transcription_queue.empty():
                 audio_file = Path(self.transcription_queue.get())
